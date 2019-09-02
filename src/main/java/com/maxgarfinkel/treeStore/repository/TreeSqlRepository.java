@@ -1,5 +1,6 @@
 package com.maxgarfinkel.treeStore.repository;
 
+import com.maxgarfinkel.treeStore.exceptions.DuplicateEntityException;
 import com.maxgarfinkel.treeStore.model.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -36,7 +37,7 @@ public class TreeSqlRepository implements TreeRepository {
     }
 
     @Override
-    public boolean createTree(Tree tree) {
+    public void createTree(Tree tree) {
         String sql = "INSERT INTO tree (uuid, latinName, commonName, lat, lon) "+
                 "VALUES(:uuid, :latinName, :commonName, :lat, :lon);";
         Map<String, Object> params = Map.of("uuid",tree.getUuid().toString(),
@@ -44,36 +45,24 @@ public class TreeSqlRepository implements TreeRepository {
                 "commonName", tree.getCommonName(),
                 "lat",tree.getLocation()[0],
                 "lon", tree.getLocation()[1]);
-        boolean success = false;
+
         try{
-            success = jdbcTemplate.execute(sql,params, (ps) -> {
-                if(!ps.execute()){
-                    return ps.getUpdateCount() == 1;
-                }else{
-                    return false;
-                }
-            });
+            jdbcTemplate.update(sql, params);
         }catch (DuplicateKeyException ex){
-            success = false;
+            throw new DuplicateEntityException("Duplicate tree creation attempted", ex);
         }
-        return success;
     }
 
     @Override
-    public boolean deleteTree(Tree tree) {
+    public void deleteTree(Tree tree) {
         String sql = "DELETE FROM tree WHERE tree.uuid = :uuid";
         Map<String, String> params = Map.of("uuid", tree.getUuid().toString());
-        return jdbcTemplate.execute(sql, params, (ps) -> {
-            if(!ps.execute()){
-                if(ps.getUpdateCount() == 1){
-                    return true;
-                }else throw new EntityNotFoundException();
-            }else return false;
-        });
+        if(jdbcTemplate.update(sql, params) == 0)
+            throw new EntityNotFoundException("Delete failed. Tree: " + tree.getUuid() + " doesn't exist.");
     }
 
     @Override
-    public boolean updateTree(Tree tree) {
+    public void updateTree(Tree tree) {
         String sql = "UPDATE tree SET latinName = :latinName, "
                         +"commonName = :commonName, lat = :lat, lon = :lon "
                         +"WHERE uuid = :uuid";
@@ -82,13 +71,8 @@ public class TreeSqlRepository implements TreeRepository {
                 "commonName", tree.getCommonName(),
                 "lat", tree.getLocation()[0],
                 "lon", tree.getLocation()[1]);
-        return jdbcTemplate.execute(sql, params, ps -> {
-            if(!ps.execute()){
-                if(ps.getUpdateCount() == 1){
-                    return true;
-                }
-            }
-            throw new EntityNotFoundException();
-        });
+        if(jdbcTemplate.update(sql,params) == 0){
+            throw new EntityNotFoundException("Update failed. Tree: " + tree.getUuid() + " doesn't exist.");
+        }
     }
 }

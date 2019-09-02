@@ -8,7 +8,7 @@ import java.util.UUID;
 @Repository
 public interface TreeRepository {
     public Tree getTreeById(UUID id);
-    public boolean createTree(Tree tree);
-    public boolean deleteTree(Tree tree);
-    public boolean updateTree(Tree tree);
+    public void createTree(Tree tree);
+    public void deleteTree(Tree tree);
+    public void updateTree(Tree tree);
 }

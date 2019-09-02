@@ -1,5 +1,6 @@
 package com.maxgarfinkel.treeStore.controller;
 
+import com.maxgarfinkel.treeStore.exceptions.DuplicateEntityException;
 import com.maxgarfinkel.treeStore.repository.TreeRepository;
 import com.maxgarfinkel.treeStore.model.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,34 +35,32 @@ public class TreeController {
 
     @PostMapping
     public ResponseEntity<Tree> createTree(@RequestBody Tree tree){
-        //Tree newTree = new Tree(tree.getUuid(), tree.getLatinName(), tree.getCommonName(), tree.getLocation());
-        boolean success = treeRepository.createTree(tree);
-        if(success) return new ResponseEntity<>(tree, HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.CONFLICT);
+        try {
+            treeRepository.createTree(tree);
+        }catch (DuplicateEntityException ex){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(tree, HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<Tree> updateTree(@RequestBody Tree tree){
         boolean success = false;
         try{
-            success = treeRepository.updateTree(tree);
+            treeRepository.updateTree(tree);
         }catch (EntityNotFoundException ex){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        if(success) return new ResponseEntity<>(tree, HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(tree, HttpStatus.OK);
     }
 
     @DeleteMapping()
     public ResponseEntity<Tree> deleteTree(@RequestBody Tree tree){
-        boolean success = false;
         try{
-            success = treeRepository.deleteTree(tree);
+            treeRepository.deleteTree(tree);
         }catch (EntityNotFoundException ex){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if(success) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }
