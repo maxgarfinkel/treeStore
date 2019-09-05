@@ -1,4 +1,4 @@
-package com.maxgarfinkel.treeStore.repository;
+package com.maxgarfinkel.treeStore.infrastructure;
 
 import com.maxgarfinkel.treeStore.model.Tree;
 import org.springframework.jdbc.core.RowMapper;

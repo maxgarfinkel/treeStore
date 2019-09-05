@@ -1,7 +1,8 @@
-package com.maxgarfinkel.treeStore.repository;
+package com.maxgarfinkel.treeStore.infrastructure;
 
 import com.maxgarfinkel.treeStore.exceptions.DuplicateEntityException;
 import com.maxgarfinkel.treeStore.model.Tree;
+import com.maxgarfinkel.treeStore.model.TreeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -25,7 +26,7 @@ public class TreeSqlRepository implements TreeRepository {
     }
 
     @Override
-    public Tree getTreeById(UUID id) {
+    public Tree getById(UUID id) {
         String sql = "SELECT * from tree where tree.uuid = :id";
         Map<String, String> params = Map.of("id",id.toString());
         TreeRowMapper rowMapper = new TreeRowMapper();
@@ -37,7 +38,7 @@ public class TreeSqlRepository implements TreeRepository {
     }
 
     @Override
-    public void createTree(Tree tree) {
+    public void store(Tree tree) {
         String sql = "INSERT INTO tree (uuid, latinName, commonName, lat, lon) "+
                 "VALUES(:uuid, :latinName, :commonName, :lat, :lon);";
         Map<String, Object> params = Map.of("uuid",tree.getUuid().toString(),
@@ -54,7 +55,7 @@ public class TreeSqlRepository implements TreeRepository {
     }
 
     @Override
-    public void deleteTree(Tree tree) {
+    public void delete(Tree tree) {
         String sql = "DELETE FROM tree WHERE tree.uuid = :uuid";
         Map<String, String> params = Map.of("uuid", tree.getUuid().toString());
         if(jdbcTemplate.update(sql, params) == 0)
@@ -62,7 +63,7 @@ public class TreeSqlRepository implements TreeRepository {
     }
 
     @Override
-    public void updateTree(Tree tree) {
+    public void update(Tree tree) {
         String sql = "UPDATE tree SET latinName = :latinName, "
                         +"commonName = :commonName, lat = :lat, lon = :lon "
                         +"WHERE uuid = :uuid";

@@ -1,18 +1,19 @@
 package com.maxgarfinkel.treeStore.controller;
 
 import com.maxgarfinkel.treeStore.exceptions.DuplicateEntityException;
-import com.maxgarfinkel.treeStore.repository.TreeRepository;
+import com.maxgarfinkel.treeStore.model.TreeRepository;
 import com.maxgarfinkel.treeStore.model.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/tree")
+@RequestMapping(path = "/V1/tree")
 public class TreeController {
 
     private final TreeRepository treeRepository;
@@ -26,7 +27,7 @@ public class TreeController {
     public ResponseEntity<Tree> getTree(@PathVariable final UUID uuid){
         Tree tree;
         try{
-            tree = treeRepository.getTreeById(uuid);
+            tree = treeRepository.getById(uuid);
         }catch (EntityNotFoundException ex){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -36,7 +37,7 @@ public class TreeController {
     @PostMapping
     public ResponseEntity<Tree> createTree(@RequestBody Tree tree){
         try {
-            treeRepository.createTree(tree);
+            treeRepository.store(tree);
         }catch (DuplicateEntityException ex){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -47,7 +48,7 @@ public class TreeController {
     public ResponseEntity<Tree> updateTree(@RequestBody Tree tree){
         boolean success = false;
         try{
-            treeRepository.updateTree(tree);
+            treeRepository.update(tree);
         }catch (EntityNotFoundException ex){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
@@ -57,7 +58,7 @@ public class TreeController {
     @DeleteMapping()
     public ResponseEntity<Tree> deleteTree(@RequestBody Tree tree){
         try{
-            treeRepository.deleteTree(tree);
+            treeRepository.delete(tree);
         }catch (EntityNotFoundException ex){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

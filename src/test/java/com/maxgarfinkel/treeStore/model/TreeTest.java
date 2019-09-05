@@ -1,5 +1,6 @@
 package com.maxgarfinkel.treeStore.model;
 
+import com.maxgarfinkel.treeStore.TestUtilities;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -26,6 +27,11 @@ public class TreeTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void newTreeWith101CharacterLatinNameThrowsException(){
+        new Tree(UUID.randomUUID(), TestUtilities.LONG_101_LENGTH_STRING,"maple", new double[]{1d,1.1d});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void newTreeWithNullCommonNameThrowsException() {
         new Tree(UUID.randomUUID(), "acer", null, new double[]{1d, 1.1d});
     }
@@ -33,6 +39,11 @@ public class TreeTest {
     @Test(expected = IllegalArgumentException.class)
     public void newTreeWithEmptyCommonNameThrowsException() {
         new Tree(UUID.randomUUID(), "acer", "", new double[]{1d, 1.1d});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void newTreeWith101CharacterCommonNameThrowsException() {
+        new Tree(UUID.randomUUID(), "acer", TestUtilities.LONG_101_LENGTH_STRING, new double[]{1d, 1.1d});
     }
 
     @Test(expected =  IllegalArgumentException.class)
