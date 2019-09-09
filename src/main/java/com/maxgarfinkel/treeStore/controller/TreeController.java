@@ -1,12 +1,11 @@
 package com.maxgarfinkel.treeStore.controller;
 
 import com.maxgarfinkel.treeStore.exceptions.DuplicateEntityException;
-import com.maxgarfinkel.treeStore.model.TreeRepository;
 import com.maxgarfinkel.treeStore.model.Tree;
+import com.maxgarfinkel.treeStore.model.TreeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
