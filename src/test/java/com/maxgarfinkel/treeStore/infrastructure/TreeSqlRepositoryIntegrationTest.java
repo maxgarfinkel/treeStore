@@ -1,6 +1,7 @@
 package com.maxgarfinkel.treeStore.infrastructure;
 
 import com.maxgarfinkel.treeStore.TestUtilities;
+import com.maxgarfinkel.treeStore.configuration.RealTreeTestConfig;
 import com.maxgarfinkel.treeStore.exceptions.DuplicateEntityException;
 import com.maxgarfinkel.treeStore.model.Tree;
 import com.maxgarfinkel.treeStore.model.TreeRepository;
@@ -18,7 +19,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = RealTreeTestConfig.class)
 public class TreeSqlRepositoryIntegrationTest {
 
     @Rule public ExpectedException exception = ExpectedException.none();

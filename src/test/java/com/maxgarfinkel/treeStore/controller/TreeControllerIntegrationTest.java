@@ -1,5 +1,6 @@
 package com.maxgarfinkel.treeStore.controller;
 
+import com.maxgarfinkel.treeStore.configuration.RealTreeTestConfig;
 import com.maxgarfinkel.treeStore.model.Tree;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -19,12 +20,10 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.JsonConfig.jsonConfig;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsArrayWithSize.arrayWithSize;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RealTreeTestConfig.class)
 public class TreeControllerIntegrationTest {
 
     @LocalServerPort
